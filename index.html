@@ -1,0 +1,101 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Socks of Destiny</title><link rel="manifest" href="manifest.json"/><meta name="theme-color" content="#0b0b0f"/>
+<style>
+:root{--bg:#0b0b0f;--panel:rgba(0,0,0,.35);--stroke:rgba(255,255,255,.12);--muted:rgba(255,255,255,.75);--accent:#ff4d4d;--radius:22px;}
+*{box-sizing:border-box;} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1200px 800px at 20% 10%, rgba(255,77,77,.20), transparent 55%),radial-gradient(900px 700px at 80% 20%, rgba(125,255,178,.14), transparent 55%),var(--bg);color:#fff;min-height:100vh;overflow:hidden;}
+.screen{position:fixed;inset:0;display:none;padding:18px;} .screen.active{display:flex;} .center{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+.card{width:min(680px,96vw);background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.55);backdrop-filter:blur(10px);}
+.logoWrap{display:flex;justify-content:center;padding:10px 0 14px;} .logo{width:min(420px,78vw);height:auto;border-radius:18px;filter:drop-shadow(0 12px 20px rgba(0,0,0,.55));}
+h1{margin:8px 0 6px;font-size:28px;letter-spacing:.4px;} .tag{color:var(--muted);font-weight:900;line-height:1.35;}
+.tap{margin-top:14px;display:flex;gap:10px;align-items:center;justify-content:center;color:rgba(255,255,255,.86);font-weight:1000;}
+.blink{display:inline-block;width:10px;height:18px;background:rgba(255,255,255,.9);border-radius:4px;margin-left:6px;animation:blink .9s steps(1) infinite;vertical-align:middle;} @keyframes blink{50%{opacity:0;}}
+.topBar{position:fixed;top:10px;left:0;right:0;display:flex;justify-content:flex-end;align-items:center;padding:0 14px;pointer-events:none;}
+.cog{pointer-events:auto;width:44px;height:44px;border-radius:16px;border:1px solid rgba(255,255,255,.16);background:rgba(0,0,0,.25);color:#fff;font-weight:1000;font-size:18px;display:flex;align-items:center;justify-content:center;}
+.wheelLayout{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding-bottom:env(safe-area-inset-bottom);}
+.wheelWrap{width:min(560px,92vw);aspect-ratio:1/1;position:relative;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:999px;box-shadow:0 14px 40px rgba(0,0,0,.55);overflow:hidden;}
+canvas{width:100%;height:100%;display:block;} .pointer{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-bottom:26px solid rgba(255,255,255,.92);filter:drop-shadow(0 6px 12px rgba(0,0,0,.7));}
+.hud{width:min(560px,92vw);display:flex;gap:10px;align-items:stretch;justify-content:space-between;}
+.pill{flex:1;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.28);font-weight:1000;text-align:center;color:rgba(255,255,255,.92);}
+.btnRow{width:min(560px,92vw);display:flex;gap:10px;}
+.btn{flex:1;border:0;border-radius:18px;padding:14px 14px;font-weight:1000;letter-spacing:.3px;color:#0b0b0f;background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.75));}
+.btn.alt{color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);} .btn:disabled{opacity:.55;}
+.hint{color:rgba(255,255,255,.75);font-weight:900;text-align:center;width:min(560px,92vw);}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.55);} .overlay.show{display:flex;}
+.turnCard{width:min(640px,96vw);max-height:92vh;overflow:auto;-webkit-overflow-scrolling:touch;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.14);border-radius:24px;box-shadow:0 16px 60px rgba(0,0,0,.65);backdrop-filter:blur(10px);}
+.turnHead{padding:16px 16px 10px;border-bottom:1px solid rgba(255,255,255,.10);} .turnTitle{font-size:22px;font-weight:1100;margin:0 0 6px;}
+.turnBody{padding:14px 16px;font-weight:1000;font-size:18px;line-height:1.25;color:rgba(255,255,255,.92);} .type{white-space:pre-wrap;}
+.cursor{display:inline-block;width:10px;height:18px;background:rgba(255,255,255,.9);border-radius:4px;margin-left:6px;animation:blink .9s steps(1) infinite;vertical-align:middle;}
+.turnFooter{position:sticky;bottom:0;background:rgba(10,10,10,.92);backdrop-filter:blur(10px);padding:14px 16px 18px;border-top:1px solid rgba(255,255,255,.10);display:flex;gap:10px;align-items:center;}
+.small{font-size:12px;color:rgba(255,255,255,.70);font-weight:900;} .primary{background:linear-gradient(180deg, rgba(255,77,77,.95), rgba(255,77,77,.75));color:#140406;}
+.pulse-endturn{animation:endPulse 1.1s ease-in-out infinite;box-shadow:0 0 0 rgba(255,77,77,0);} @keyframes endPulse{0%{transform:scale(1);box-shadow:0 0 0 rgba(255,77,77,0);}50%{transform:scale(1.02);box-shadow:0 0 22px rgba(255,77,77,.35);}100%{transform:scale(1);box-shadow:0 0 0 rgba(255,77,77,0);}}
+.triviaBox{display:none;margin:12px 16px 0;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.30);} .triviaBox.show{display:block;}
+.triviaQRow{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;} .triviaQ{font-weight:1100;font-size:18px;line-height:1.25;}
+.triviaTimer{min-width:64px;text-align:center;font-weight:1200;border-radius:14px;padding:8px 10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);} .triviaTimer.danger{animation:flash .65s steps(1) infinite;} @keyframes flash{50%{opacity:.25;}}
+.choices{display:grid;gap:10px;margin-top:12px;} .choiceBtn{border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;border-radius:16px;padding:12px 12px;font-weight:1000;text-align:left;}
+.choiceBtn.correct{border-color:rgba(125,255,178,.55);background:rgba(125,255,178,.16);} .choiceBtn.wrong{border-color:rgba(255,77,77,.55);background:rgba(255,77,77,.16);}
+.postTrivia{display:none;margin:12px 16px 0;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.30);} .postTrivia.show{display:block;}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px, 92vw);transform:translateX(105%);transition:transform .22s ease;background:rgba(0,0,0,.72);border-left:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px);padding:14px;overflow:auto;-webkit-overflow-scrolling:touch;}
+.drawer.show{transform:translateX(0);} .drawer h2{margin:8px 0 8px;font-size:18px;font-weight:1100;}
+.field{display:flex;gap:8px;margin:8px 0;} .input{flex:1;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;border-radius:14px;padding:10px 10px;font-weight:900;}
+.list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;} .tagP{padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:900;}
+
+/* --- Shifty eyes (dice roll = 1) --- */
+.shifty-eyes{display:none;justify-content:center;align-items:center;gap:12px;margin:12px 0 0;}
+.shifty-eyes.show{display:flex;}
+.eye{width:44px;height:44px;background:#fff;border-radius:50%;position:relative;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.35);}
+.pupil{width:16px;height:16px;background:#000;border-radius:50%;position:absolute;top:14px;left:14px;animation:look 1.15s infinite;}
+.eye::after{content:"";position:absolute;inset:-6px; border-radius:50%; box-shadow: inset 0 0 0 4px rgba(0,0,0,.08);}
+@keyframes look{
+  0%{transform:translate(0,0);}
+  20%{transform:translate(-10px,0);}
+  45%{transform:translate(10px,0);}
+  70%{transform:translate(0,7px);}
+  100%{transform:translate(0,0);}
+}
+
+</style></head><body>
+<div class="topBar"><button class="cog" id="cogBtn" title="Config">⚙</button></div>
+<section id="splash" class="screen active"><div class="center"><div class="card">
+<div class="logoWrap"><img class="logo" src="logo.png" alt="Socks of Destiny logo"></div>
+<h1>Socks of Destiny</h1><div class="tag">The festive sock-steal where dignity goes to die.</div>
+<div class="tap">Tap anywhere to begin<span class="blink"></span></div></div></div></section>
+
+<section id="wheelScreen" class="screen"><div class="wheelLayout">
+<div class="wheelWrap"><div class="pointer"></div><canvas id="wheelCanvas" width="900" height="900"></canvas></div>
+<div class="hud"><div class="pill" id="wheelStatus">Spin to assign socks</div></div>
+<div class="btnRow"><button class="btn" id="spinBtn" type="button">SPIN</button><button class="btn alt" id="toTurnsBtn" type="button">Next Stage</button></div>
+<div class="hint" id="wheelHint">Wheel empties → Dice stage unlocks.</div></div></section>
+
+<section id="turnScreen" class="screen"><div class="wheelLayout"><div class="card" style="width:min(560px,92vw);">
+<h1 style="margin:0 0 8px;font-size:22px;">Turn Picker</h1>
+<div class="tag" id="turnInfo">Tap to summon the next contender.</div>
+<div class="btnRow" style="width:100%;margin-top:12px;"><button class="btn" id="pickTurnBtn" type="button">Pick Contender</button>
+<button class="btn alt" id="resetTurnsBtn" type="button">Reset Turns</button></div>
+<div class="list" id="turnRemaining"></div></div></div></section>
+
+<div class="overlay" id="overlay"><div class="turnCard">
+<div class="turnHead"><div class="turnTitle" id="overlayTitle">The Dice Decides</div><div class="small" id="overlaySub">Roll the dice. Obey.</div></div>
+<div class="turnBody"><div class="type" id="overlayText"></div>
+
+<div class="shifty-eyes" id="shiftyEyes" aria-hidden="true">
+  <div class="eye"><div class="pupil"></div></div>
+  <div class="eye"><div class="pupil"></div></div>
+</div>
+</div>
+
+<div class="triviaBox" id="triviaBox"><div class="triviaQRow"><div class="triviaQ" id="triviaQ"></div><div class="triviaTimer" id="triviaTimer"></div></div>
+<div class="choices" id="triviaChoices"></div></div>
+
+<div class="postTrivia" id="postTrivia"><div style="font-weight:1100;" id="postTriviaMsg"></div>
+<div class="btnRow" style="width:100%;margin-top:12px;"><button class="btn primary" id="postTriviaContinue" type="button">Tap to continue</button></div></div>
+
+<div class="turnFooter"><button class="btn" id="rollBtn" type="button">Roll Dice</button><button class="btn primary" id="endTurnBtn" type="button">End Turn</button></div>
+</div></div>
+
+<div class="drawer" id="drawer"><h2>Config</h2><div class="small">Tap a name to remove.</div>
+<div class="field"><input class="input" id="playerInput" placeholder="Add player name"/><button class="btn" id="addPlayerBtn" type="button">Add</button></div>
+<div class="list" id="playerTags"></div>
+<div style="margin-top:12px;"><button class="btn alt" id="resetGameBtn" type="button">Hard Reset Game</button></div></div>
+
+<script src="app.js?v=v9"></script></body></html>
